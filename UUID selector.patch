@@ -1,0 +1,1411 @@
+Index: app/src/main/res/layout/activity_send.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_send.xml	(date 1597301994668)
++++ app/src/main/res/layout/activity_send.xml	(date 1597301994668)
+@@ -0,0 +1,232 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/relativeLayout"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".SendActivity">
++
++    <androidx.constraintlayout.widget.ConstraintLayout
++        android:id="@+id/constraintLayout"
++        android:layout_width="match_parent"
++        android:layout_height="0dp"
++        app:layout_constraintHeight_default="percent"
++        app:layout_constraintHeight_percent=".33"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent">
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline7"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="horizontal"
++            app:layout_constraintGuide_percent="0.06" />
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline5"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="vertical"
++            app:layout_constraintGuide_percent="0.04" />
++
++        <TextView
++            android:id="@+id/DeviceNameSend"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="@string/device"
++            app:layout_constraintStart_toStartOf="@+id/guideline5"
++            app:layout_constraintTop_toTopOf="@+id/guideline7" />
++
++        <EditText
++            android:id="@+id/dataToSend"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:autofillHints=""
++            android:ems="10"
++            android:hint="@string/device_name"
++            android:inputType="textPersonName"
++            android:text="@string/datatosend"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintStart_toStartOf="@+id/guideline5"
++            app:layout_constraintTop_toTopOf="parent" />
++
++        <Button
++            android:id="@+id/buttonSendText"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="@string/sendtext"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toEndOf="@+id/dataToSend"
++            app:layout_constraintTop_toTopOf="parent" />
++
++    </androidx.constraintlayout.widget.ConstraintLayout>
++
++    <androidx.constraintlayout.widget.ConstraintLayout
++        android:id="@+id/constraintLayout2"
++        android:layout_width="match_parent"
++        android:layout_height="0dp"
++        app:layout_constraintHeight_default="percent"
++        app:layout_constraintHeight_percent=".33"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline12"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="vertical"
++            app:layout_constraintGuide_percent="0.04" />
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline13"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="horizontal"
++            app:layout_constraintGuide_percent="0.06" />
++
++        <Button
++            android:id="@+id/SendOnePacket"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="@string/send_one"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toEndOf="@+id/imageView"
++            app:layout_constraintTop_toBottomOf="@+id/buttonSendImage" />
++
++        <Button
++            android:id="@+id/buttonImportImage"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="@string/import_image"
++            app:layout_constraintBottom_toTopOf="@+id/buttonSendImage"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toEndOf="@+id/imageView"
++            app:layout_constraintTop_toTopOf="parent" />
++
++        <ImageView
++            android:id="@+id/imageView"
++            android:layout_width="200dp"
++            android:layout_height="200dp"
++            android:contentDescription="@string/todo"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintStart_toStartOf="@+id/guideline12"
++            app:layout_constraintTop_toTopOf="parent"
++            tools:srcCompat="@tools:sample/backgrounds/scenic" />
++
++        <Button
++            android:id="@+id/buttonSendImage"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="@string/sendimage"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toEndOf="@+id/imageView"
++            app:layout_constraintTop_toTopOf="parent" />
++    </androidx.constraintlayout.widget.ConstraintLayout>
++
++    <androidx.constraintlayout.widget.ConstraintLayout
++        android:layout_width="match_parent"
++        android:layout_height="0dp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintHeight_default="percent"
++        app:layout_constraintHeight_percent=".33"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline14"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="vertical"
++            app:layout_constraintGuide_percent="0.96" />
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline15"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="vertical"
++            app:layout_constraintGuide_percent="0.04" />
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline16"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="horizontal"
++            app:layout_constraintGuide_percent="0.06" />
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline17"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="horizontal"
++            app:layout_constraintGuide_percent="0.94" />
++
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline18"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="horizontal"
++            app:layout_constraintGuide_percent="0.5" />
++
++        <TextView
++            android:id="@+id/charsetNext"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text=""
++            android:textAlignment="textStart"
++            android:textAllCaps="true"
++            android:textSize="12sp"
++            app:layout_constraintBottom_toTopOf="@+id/guideline17"
++            app:layout_constraintEnd_toStartOf="@+id/guideline14"
++            app:layout_constraintStart_toStartOf="@+id/guideline15" />
++
++        <TextView
++            android:id="@+id/Next"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="@string/next"
++            app:layout_constraintBottom_toTopOf="@+id/charsetNext"
++            app:layout_constraintStart_toStartOf="@+id/guideline15" />
++
++        <TextView
++            android:id="@+id/CharsetPrevious"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text=""
++            android:textAlignment="textStart"
++            android:textAllCaps="true"
++            android:textSize="12sp"
++            app:layout_constraintBottom_toTopOf="@+id/guideline18"
++            app:layout_constraintEnd_toStartOf="@+id/guideline14"
++            app:layout_constraintStart_toStartOf="@+id/guideline15" />
++
++        <TextView
++            android:id="@+id/Previous"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="@string/previous"
++            app:layout_constraintBottom_toTopOf="@+id/CharsetPrevious"
++            app:layout_constraintStart_toStartOf="@+id/guideline15" />
++
++        <TextView
++            android:id="@+id/ProgressStatus"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text=""
++            app:layout_constraintStart_toStartOf="@+id/guideline15"
++            app:layout_constraintTop_toTopOf="@+id/guideline16" />
++
++        <ProgressBar
++            android:id="@+id/progressBar"
++            style="?android:attr/progressBarStyleHorizontal"
++            android:layout_width="0dp"
++            android:layout_height="10dp"
++            app:layout_constraintBottom_toTopOf="@+id/guideline16"
++            app:layout_constraintEnd_toStartOf="@+id/guideline14"
++            app:layout_constraintStart_toStartOf="@+id/guideline15" />
++    </androidx.constraintlayout.widget.ConstraintLayout>
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_connect.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_connect.xml	(date 1597302996334)
++++ app/src/main/res/layout/activity_connect.xml	(date 1597302996334)
+@@ -2,231 +2,39 @@
+ <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+-    android:id="@+id/relativeLayout"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     tools:context=".ConnectActivity">
+ 
+-    <androidx.constraintlayout.widget.ConstraintLayout
+-        android:id="@+id/constraintLayout"
+-        android:layout_width="match_parent"
+-        android:layout_height="0dp"
+-        app:layout_constraintHeight_default="percent"
+-        app:layout_constraintHeight_percent=".33"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent">
+-
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline7"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="horizontal"
+-            app:layout_constraintGuide_percent="0.06" />
++    <androidx.constraintlayout.widget.Guideline
++        android:id="@+id/guideline7"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:orientation="horizontal"
++        app:layout_constraintGuide_percent="0.02" />
+ 
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline5"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="vertical"
+-            app:layout_constraintGuide_percent="0.04" />
++    <androidx.constraintlayout.widget.Guideline
++        android:id="@+id/guideline5"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:orientation="vertical"
++        app:layout_constraintGuide_percent="0.04" />
+ 
+-        <TextView
+-            android:id="@+id/DeviceName"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="@string/device"
+-            app:layout_constraintStart_toStartOf="@+id/guideline5"
+-            app:layout_constraintTop_toTopOf="@+id/guideline7" />
++    <TextView
++        android:id="@+id/DeviceNameConnect"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="@string/device"
++        app:layout_constraintStart_toStartOf="@+id/guideline5"
++        app:layout_constraintTop_toTopOf="@+id/guideline7" />
+ 
+-        <EditText
+-            android:id="@+id/dataToSend"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:autofillHints=""
+-            android:ems="10"
+-            android:hint="@string/device_name"
+-            android:inputType="textPersonName"
+-            android:text="@string/datatosend"
+-            app:layout_constraintBottom_toBottomOf="parent"
+-            app:layout_constraintStart_toStartOf="@+id/guideline5"
+-            app:layout_constraintTop_toTopOf="parent" />
+-
+-        <Button
+-            android:id="@+id/buttonSendText"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="@string/sendtext"
+-            app:layout_constraintBottom_toBottomOf="parent"
+-            app:layout_constraintEnd_toEndOf="parent"
+-            app:layout_constraintStart_toEndOf="@+id/dataToSend"
+-            app:layout_constraintTop_toTopOf="parent" />
+ 
+-    </androidx.constraintlayout.widget.ConstraintLayout>
+-
+-    <androidx.constraintlayout.widget.ConstraintLayout
+-        android:id="@+id/constraintLayout2"
++    <ListView
++        android:id="@+id/listView2"
+         android:layout_width="match_parent"
+-        android:layout_height="0dp"
+-        app:layout_constraintHeight_default="percent"
+-        app:layout_constraintHeight_percent=".33"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+-
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline12"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="vertical"
+-            app:layout_constraintGuide_percent="0.04" />
+-
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline13"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="horizontal"
+-            app:layout_constraintGuide_percent="0.06" />
+-
+-        <Button
+-            android:id="@+id/SendOnePacket"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="@string/send_one"
+-            app:layout_constraintBottom_toBottomOf="parent"
+-            app:layout_constraintEnd_toEndOf="parent"
+-            app:layout_constraintStart_toEndOf="@+id/imageView"
+-            app:layout_constraintTop_toBottomOf="@+id/buttonSendImage" />
+-
+-        <Button
+-            android:id="@+id/buttonImportImage"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="@string/import_image"
+-            app:layout_constraintBottom_toTopOf="@+id/buttonSendImage"
+-            app:layout_constraintEnd_toEndOf="parent"
+-            app:layout_constraintStart_toEndOf="@+id/imageView"
+-            app:layout_constraintTop_toTopOf="parent" />
+-
+-        <ImageView
+-            android:id="@+id/imageView"
+-            android:layout_width="200dp"
+-            android:layout_height="200dp"
+-            android:contentDescription="@string/todo"
+-            app:layout_constraintBottom_toBottomOf="parent"
+-            app:layout_constraintStart_toStartOf="@+id/guideline12"
+-            app:layout_constraintTop_toTopOf="parent"
+-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+-
+-        <Button
+-            android:id="@+id/buttonSendImage"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="@string/sendimage"
+-            app:layout_constraintBottom_toBottomOf="parent"
+-            app:layout_constraintEnd_toEndOf="parent"
+-            app:layout_constraintStart_toEndOf="@+id/imageView"
+-            app:layout_constraintTop_toTopOf="parent" />
+-    </androidx.constraintlayout.widget.ConstraintLayout>
+-
+-    <androidx.constraintlayout.widget.ConstraintLayout
+-        android:layout_width="match_parent"
+-        android:layout_height="0dp"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintHeight_default="percent"
+-        app:layout_constraintHeight_percent=".33"
++        android:layout_height="wrap_content"
++        android:layout_centerHorizontal="true"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+-
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline14"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="vertical"
+-            app:layout_constraintGuide_percent="0.96" />
+-
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline15"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="vertical"
+-            app:layout_constraintGuide_percent="0.04" />
+-
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline16"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="horizontal"
+-            app:layout_constraintGuide_percent="0.06" />
+-
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline17"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="horizontal"
+-            app:layout_constraintGuide_percent="0.94" />
+-
+-        <androidx.constraintlayout.widget.Guideline
+-            android:id="@+id/guideline18"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:orientation="horizontal"
+-            app:layout_constraintGuide_percent="0.5" />
+-
+-        <TextView
+-            android:id="@+id/charsetNext"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text=""
+-            android:textAlignment="textStart"
+-            android:textAllCaps="true"
+-            android:textSize="12sp"
+-            app:layout_constraintBottom_toTopOf="@+id/guideline17"
+-            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+-            app:layout_constraintStart_toStartOf="@+id/guideline15" />
+-
+-        <TextView
+-            android:id="@+id/Next"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="@string/next"
+-            app:layout_constraintBottom_toTopOf="@+id/charsetNext"
+-            app:layout_constraintStart_toStartOf="@+id/guideline15" />
+-
+-        <TextView
+-            android:id="@+id/CharsetPrevious"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text=""
+-            android:textAlignment="textStart"
+-            android:textAllCaps="true"
+-            android:textSize="12sp"
+-            app:layout_constraintBottom_toTopOf="@+id/guideline18"
+-            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+-            app:layout_constraintStart_toStartOf="@+id/guideline15" />
+-
+-        <TextView
+-            android:id="@+id/Previous"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="@string/previous"
+-            app:layout_constraintBottom_toTopOf="@+id/CharsetPrevious"
+-            app:layout_constraintStart_toStartOf="@+id/guideline15" />
+-
+-        <TextView
+-            android:id="@+id/ProgressStatus"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text=""
+-            app:layout_constraintStart_toStartOf="@+id/guideline15"
+-            app:layout_constraintTop_toTopOf="@+id/guideline16" />
+-
+-        <ProgressBar
+-            android:id="@+id/progressBar"
+-            style="?android:attr/progressBarStyleHorizontal"
+-            android:layout_width="0dp"
+-            android:layout_height="10dp"
+-            app:layout_constraintBottom_toTopOf="@+id/guideline16"
+-            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+-            app:layout_constraintStart_toStartOf="@+id/guideline15" />
+-    </androidx.constraintlayout.widget.ConstraintLayout>
++        app:layout_constraintTop_toBottomOf="@+id/DeviceNameConnect" />
+ 
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/stble/ScanActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/stble/ScanActivity.java	(date 1597644647192)
++++ app/src/main/java/com/example/stble/ScanActivity.java	(date 1597644647192)
+@@ -45,8 +45,6 @@
+     private List<String> mListElementsArrayList;
+     private ArrayAdapter<String> mAdapter;
+ 
+-    private Handler mHandler;
+-
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+@@ -138,8 +136,7 @@
+         mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+         mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
+         mScanning = true;
+-        mHandler = new Handler();
+-        mHandler.postDelayed(this::stopScan, SCAN_PERIOD);
++        new Handler().postDelayed(this::stopScan, SCAN_PERIOD);
+     }
+ 
+     private void stopScan() {
+@@ -150,7 +147,6 @@
+ 
+         mScanCallback = null;
+         mScanning = false;
+-        mHandler = null;
+     }
+ 
+     private void scanComplete() {
+Index: app/src/main/java/com/example/stble/SendActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/stble/SendActivity.java	(date 1597310170244)
++++ app/src/main/java/com/example/stble/SendActivity.java	(date 1597310170244)
+@@ -0,0 +1,398 @@
++package com.example.stble;
++
++import androidx.appcompat.app.AppCompatActivity;
++
++import android.bluetooth.BluetoothDevice;
++import android.bluetooth.BluetoothGatt;
++import android.bluetooth.BluetoothGattCallback;
++import android.bluetooth.BluetoothGattCharacteristic;
++import android.bluetooth.BluetoothGattService;
++import android.bluetooth.BluetoothProfile;
++import android.content.Intent;
++import android.net.Uri;
++import android.os.Bundle;
++import android.util.Log;
++import android.view.View;
++import android.widget.Button;
++import android.widget.EditText;
++import android.widget.ImageView;
++import android.widget.ProgressBar;
++import android.widget.TextView;
++
++import java.io.ByteArrayOutputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.nio.ByteBuffer;
++import java.nio.charset.StandardCharsets;
++import java.util.Arrays;
++import java.util.UUID;
++
++public class SendActivity extends AppCompatActivity {
++
++
++    private static final int PACKET_SIZE = 20;
++    private static final String TAG = "SEND_ACTIVITY";
++    private UUID SERVICE_UUID;
++    private UUID CHARACTERISTIC_UUID;
++
++    private BluetoothGatt mGatt;
++
++    private Button mButtonSendText, mButtonSendImage, mButtonImportImage, mButtonSendOne;
++    private ImageView mImageView;
++    private EditText mDataToSend;
++    private ProgressBar mProgressBar;
++
++    private TextView mStatus, mNextCharset, mPreviousCharset, mNext, mPrevious;
++
++    private byte[] mImage;
++    private byte[] mMessageSent;
++    private int mI;
++
++    private volatile boolean mBLEAvailable = true;
++
++    private boolean mInitialized;
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_send);
++
++        TextView deviceText = findViewById(R.id.DeviceNameSend);
++
++        mStatus = findViewById(R.id.ProgressStatus);
++        mNextCharset = findViewById(R.id.charsetNext);
++        mNext = findViewById(R.id.Next);
++        mPreviousCharset = findViewById(R.id.CharsetPrevious);
++        mPrevious = findViewById(R.id.Previous);
++
++        mNext.setVisibility(View.INVISIBLE);
++        mPrevious.setVisibility(View.INVISIBLE);
++
++        mDataToSend = findViewById(R.id.dataToSend);
++        mButtonSendText = findViewById(R.id.buttonSendText);
++
++        mButtonSendImage = findViewById(R.id.buttonSendImage);
++        mButtonImportImage = findViewById(R.id.buttonImportImage);
++        mButtonSendOne = findViewById(R.id.SendOnePacket);
++        mImageView = findViewById(R.id.imageView);
++
++        mProgressBar = findViewById(R.id.progressBar);
++        mProgressBar.setVisibility(View.INVISIBLE);
++
++        BluetoothDevice selectedDevice = getIntent().getParcelableExtra("Device");
++        assert selectedDevice != null;
++        Log.d(TAG, "Device " + selectedDevice.getName());
++
++        deviceText.setText(selectedDevice.getName());
++
++        mButtonImportImage.setOnClickListener(view -> {
++            Intent mRequestFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
++            mRequestFileIntent.setType("image/jpeg");
++            startActivityForResult(mRequestFileIntent, 0);
++        });
++
++        mButtonSendText.setOnClickListener(view -> {
++            boolean wasEnabled = false;
++
++            if (mButtonSendImage.isEnabled())
++                wasEnabled = true;
++
++            mButtonSendText.setEnabled(false);
++            mButtonImportImage.setEnabled(false);
++            mButtonSendImage.setEnabled(false);
++
++            String message = mDataToSend.getText().toString();
++            byte[] header = new byte[]{(byte) 0xAA, (byte) 0xAA};
++            byte[] messageBytes;
++            messageBytes = message.getBytes(StandardCharsets.UTF_8);
++            byte[] finalMessage = new byte[header.length + messageBytes.length];
++            System.arraycopy(header, 0, finalMessage, 0, header.length);
++            System.arraycopy(messageBytes, 0, finalMessage, header.length, messageBytes.length);
++
++            sendMessage(finalMessage);
++
++            boolean finalWasEnabled = wasEnabled;
++            runOnUiThread(() -> {
++                if (finalWasEnabled)
++                    mButtonSendImage.setEnabled(true);
++                mButtonSendText.setEnabled(true);
++                mButtonImportImage.setEnabled(true);
++            });
++        });
++
++        mButtonSendOne.setOnClickListener(view -> {
++            if (mMessageSent == null) {
++                byte[] header = new byte[]{(byte) 0x55, (byte) 0x55};
++                byte[] sizeInBytes = ByteBuffer.allocate(4).putInt(mImage.length).array();
++
++                byte[] finalHeader = new byte[PACKET_SIZE];
++
++                System.arraycopy(header, 0, finalHeader, 0, header.length);
++                System.arraycopy(sizeInBytes, 0, finalHeader, header.length, sizeInBytes.length);
++
++                mMessageSent = finalHeader;
++                byte[] finalMessagePart2 = mMessageSent;
++                runOnUiThread(() -> {
++                    String text = "0/" + ((mImage.length / PACKET_SIZE) + 1);
++                    mStatus.setText(text);
++                    mPreviousCharset.setText(mNextCharset.getText());
++                    mNextCharset.setText(bytesToHex(finalMessagePart2));
++                    mProgressBar.setVisibility(View.VISIBLE);
++                    mProgressBar.setMax(mImage.length / PACKET_SIZE);
++                    mButtonSendImage.setEnabled(false);
++                    mButtonImportImage.setEnabled(false);
++                    mButtonSendText.setEnabled(false);
++                });
++                sendMessage(mMessageSent);
++                mBLEAvailable = false;
++            } else {
++                mMessageSent = Arrays.copyOfRange(mImage, mI * PACKET_SIZE, ((mI + 1) * PACKET_SIZE));
++                int finalI = mI;
++                byte[] finalMessagePart2 = mMessageSent;
++                runOnUiThread(() -> {
++                    String text = finalI + 1 + "/" + ((mImage.length / PACKET_SIZE) + 1);
++                    mPreviousCharset.setText(mNextCharset.getText());
++                    mNextCharset.setText(bytesToHex(finalMessagePart2));
++                    mStatus.setText(text);
++                    mProgressBar.setProgress(mI);
++                });
++
++                if (mBLEAvailable) {
++                    sendMessage(mMessageSent);
++                    mI++;
++                    mBLEAvailable = false;
++                }
++            }
++        });
++
++        mButtonSendImage.setOnClickListener(view -> {
++            runOnUiThread(() -> {
++                mButtonSendText.setEnabled(false);
++                mButtonSendImage.setEnabled(false);
++                mButtonImportImage.setEnabled(false);
++                mButtonSendOne.setEnabled(false);
++            });
++
++
++            Thread thread = new Thread() {
++                @Override
++                public void run() {
++                    byte[] header = new byte[]{(byte) 0x55, (byte) 0x55};
++                    byte[] sizeInBytes = ByteBuffer.allocate(4).putInt(mImage.length).array();
++                    byte[] finalHeader = new byte[PACKET_SIZE];
++
++                    System.arraycopy(header, 0, finalHeader, 0, header.length);
++                    System.arraycopy(sizeInBytes, 0, finalHeader, header.length, sizeInBytes.length);
++
++                    mProgressBar.setMax(mImage.length / PACKET_SIZE);
++
++                    mMessageSent = finalHeader;
++                    byte[] finalMessagePart = mMessageSent;
++                    runOnUiThread(() -> {
++                        String text = "0/" + ((mImage.length / PACKET_SIZE) + 1);
++                        mStatus.setText(text);
++                        mPreviousCharset.setText(mNextCharset.getText());
++                        mNextCharset.setText(bytesToHex(finalMessagePart));
++                        mProgressBar.setVisibility(View.VISIBLE);
++                        mNext.setVisibility(View.VISIBLE);
++                        mPrevious.setVisibility(View.VISIBLE);
++                        mButtonSendImage.setEnabled(false);
++                        mButtonImportImage.setEnabled(false);
++                        mButtonSendOne.setEnabled(false);
++                        mButtonSendText.setEnabled(false);
++                    });
++
++                    try {
++                        sendMessage(mMessageSent);
++                        mBLEAvailable = false;
++                        Thread.sleep(100);
++                    } catch (InterruptedException e) {
++                        e.printStackTrace();
++                    }
++
++                    for (mI = 0; mI != (mImage.length / PACKET_SIZE) + 1; mI++) {
++                        while (!mBLEAvailable) {
++                            try {
++                                Thread.sleep(1);
++                            } catch (InterruptedException e) {
++                                e.printStackTrace();
++                            }
++                        }
++                        mMessageSent = Arrays.copyOfRange(mImage, mI * PACKET_SIZE, ((mI + 1) * PACKET_SIZE));
++                        int finalI = mI;
++                        byte[] finalMessagePart2 = mMessageSent;
++                        mProgressBar.setProgress(mI);
++                        runOnUiThread(() -> {
++                            String text = finalI + 1 + "/" + ((mImage.length / PACKET_SIZE) + 1);
++                            mPreviousCharset.setText(mNextCharset.getText());
++                            mNextCharset.setText(bytesToHex(finalMessagePart2));
++                            mStatus.setText(text);
++                        });
++
++                        if (!sendMessage(mMessageSent))
++                            mI--;
++                        else
++                            mBLEAvailable = false;
++                    }
++
++                    mMessageSent = null;
++
++                    runOnUiThread(() -> {
++                        mProgressBar.setVisibility(View.INVISIBLE);
++                        mNext.setVisibility(View.INVISIBLE);
++                        mPrevious.setVisibility(View.INVISIBLE);
++                        mPreviousCharset.setText("");
++                        mNextCharset.setText("");
++                        mStatus.setText("");
++                        mButtonSendText.setEnabled(true);
++                        mButtonSendImage.setEnabled(true);
++                        mButtonImportImage.setEnabled(true);
++                        mButtonSendOne.setEnabled(true);
++                    });
++
++                }
++            };
++
++            thread.start();
++        });
++
++        mButtonSendImage.setEnabled(false);
++        mButtonSendOne.setEnabled(false);
++
++        SERVICE_UUID = java.util.UUID.fromString(getIntent().getStringExtra("Service"));
++        CHARACTERISTIC_UUID = java.util.UUID.fromString(getIntent().getStringExtra("Chara"));
++
++        Log.d(TAG, selectedDevice.getName() + " " + SERVICE_UUID + " " + CHARACTERISTIC_UUID);
++        connectDevice(selectedDevice);
++
++        mButtonSendText.setEnabled(false);
++        mButtonImportImage.setEnabled(false);
++    }
++
++
++    public byte[] getBytes(InputStream inputStream) throws IOException {
++        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
++        int bufferSize = 1024;
++        byte[] buffer = new byte[bufferSize];
++
++        int len;
++        while ((len = inputStream.read(buffer)) != -1) {
++            byteBuffer.write(buffer, 0, len);
++        }
++        return byteBuffer.toByteArray();
++    }
++
++    @Override
++    public void onActivityResult(int requestCode, int resultCode,
++                                 Intent returnIntent) {
++        super.onActivityResult(requestCode, resultCode, returnIntent);
++        if (resultCode == RESULT_OK) {
++            Uri returnUri = returnIntent.getData();
++            mImageView.setImageURI(returnUri);
++
++            InputStream iStream;
++            try {
++                assert returnUri != null;
++                iStream = getContentResolver().openInputStream(returnUri);
++                assert iStream != null;
++                mImage = getBytes(iStream);
++            } catch (IOException e) {
++                e.printStackTrace();
++            }
++
++            mButtonSendImage.setEnabled(true);
++            mButtonSendOne.setEnabled(true);
++        }
++    }
++
++    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
++
++    public static String bytesToHex(byte[] bytes) {
++        byte[] hexChars = new byte[bytes.length * 3];
++        for (int j = 0; j < bytes.length; j++) {
++            int v = bytes[j] & 0xFF;
++            hexChars[j * 3] = (byte) HEX_ARRAY[v >>> 4];
++            hexChars[j * 3 + 1] = (byte) HEX_ARRAY[v & 0x0F];
++            if (j != bytes.length - 1)
++                hexChars[j * 3 + 2] = '-';
++        }
++        return new String(hexChars, StandardCharsets.UTF_8);
++    }
++
++    private boolean sendMessage(byte[] message) {
++        if (!mInitialized) {
++            return false;
++        }
++        BluetoothGattService service = mGatt.getService(SERVICE_UUID);
++        BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_UUID);
++        characteristic.setValue(message);
++
++        boolean success = mGatt.writeCharacteristic(characteristic);
++        Log.d(TAG, "Sending message " + (success ? "success \"" : "not success \"") + bytesToHex(message) + "\"");
++        return success;
++    }
++
++    private void connectDevice(BluetoothDevice device) {
++        SendActivity.GattClientCallback gattClientCallback = new SendActivity.GattClientCallback();
++        mGatt = device.connectGatt(this, false, gattClientCallback);
++    }
++
++    private class GattClientCallback extends BluetoothGattCallback {
++        @Override
++        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
++            switch (status) {
++                case BluetoothGatt.GATT_SUCCESS: {
++                    Log.i(TAG, "Wrote to characteristic " + characteristic.getUuid() + " | value: " + bytesToHex(characteristic.getValue()));
++                    mBLEAvailable = true;
++                    break;
++                }
++                case BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH: {
++                    Log.e(TAG, "Write exceeded connection ATT MTU!");
++                    break;
++                }
++                case BluetoothGatt.GATT_WRITE_NOT_PERMITTED: {
++                    Log.e(TAG, "Write not permitted!");
++                    break;
++                }
++                default: {
++                    Log.e(TAG, "Characteristic write failed, error: " + status);
++                    break;
++                }
++            }
++            super.onCharacteristicWrite(gatt, characteristic, status);
++        }
++
++        @Override
++        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
++            super.onConnectionStateChange(gatt, status, newState);
++            if (status == BluetoothGatt.GATT_FAILURE) {
++                disconnectGattServer();
++                return;
++            } else if (status != BluetoothGatt.GATT_SUCCESS) {
++                disconnectGattServer();
++                return;
++            }
++            if (newState == BluetoothProfile.STATE_CONNECTED) {
++                BluetoothGattService service = mGatt.getService(SERVICE_UUID);
++                BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_UUID);
++                characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
++                mInitialized = mGatt.setCharacteristicNotification(characteristic, true);
++
++                runOnUiThread(() -> {
++                    mButtonSendText.setEnabled(true);
++                    mButtonImportImage.setEnabled(true);
++                });
++
++            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
++                disconnectGattServer();
++            }
++        }
++    }
++
++    private void disconnectGattServer() {
++        if (mGatt != null) {
++            mGatt.disconnect();
++            mGatt.close();
++        }
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/stble/ConnectActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/stble/ConnectActivity.java	(date 1597309599253)
++++ app/src/main/java/com/example/stble/ConnectActivity.java	(date 1597309599253)
+@@ -7,249 +7,34 @@
+ import android.bluetooth.BluetoothGattService;
+ import android.bluetooth.BluetoothProfile;
+ import android.content.Intent;
+-import android.net.Uri;
+ import android.os.Bundle;
+-import android.os.ParcelUuid;
+ import android.util.Log;
+-import android.view.View;
+-import android.widget.Button;
+-import android.widget.EditText;
+-import android.widget.ImageView;
+-import android.widget.ProgressBar;
++import android.widget.ArrayAdapter;
++import android.widget.ListView;
+ import android.widget.TextView;
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ 
+-import java.io.ByteArrayOutputStream;
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.nio.ByteBuffer;
+-import java.nio.charset.StandardCharsets;
+-import java.util.Arrays;
+-import java.util.UUID;
++import java.util.ArrayList;
+ 
+ public class ConnectActivity extends AppCompatActivity {
+ 
+-    private static final int PACKET_SIZE = 20;
+     private static final String TAG = "CONNECT_ACTIVITY";
+-    private static final UUID SERVICE_UUID = java.util.UUID.fromString("0000c001-0000-1000-8000-00805f9b34fb");
+-    private static final UUID CHARACTERISTIC_UUID = java.util.UUID.fromString("0000c002-0000-1000-8000-00805f9b34fb");
++
++    ListView mListView;
++
++    ArrayList<String> mListItems = new ArrayList<>();
++    ArrayList<BluetoothGattCharacteristic> mListCharacteristics = new ArrayList<>();
++    ArrayAdapter<String> mAdapter;
+ 
+     private BluetoothGatt mGatt;
+ 
+-    private volatile boolean mConnected;
+-    private boolean mInitialized;
+-
+-    private Button mButtonSendText, mButtonSendImage, mButtonImportImage, mButtonSendOne;
+-    private ImageView mImageView;
+-    private EditText mDataToSend;
+-    private ProgressBar mProgressBar;
+-
+-    private TextView mStatus, mNextCharset, mPreviousCharset, mNext, mPrevious;
+-
+-    private byte[] mImage;
+-    private byte[] mMessageSent;
+-    private int mI;
+-
+-    private volatile boolean mBLEAvailable = true;
+-
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_connect);
+ 
+-        TextView deviceText = findViewById(R.id.DeviceName);
+-
+-        mStatus = findViewById(R.id.ProgressStatus);
+-        mNextCharset = findViewById(R.id.charsetNext);
+-        mNext = findViewById(R.id.Next);
+-        mPreviousCharset = findViewById(R.id.CharsetPrevious);
+-        mPrevious = findViewById(R.id.Previous);
+-
+-        mNext.setVisibility(View.INVISIBLE);
+-        mPrevious.setVisibility(View.INVISIBLE);
+-
+-        mDataToSend = findViewById(R.id.dataToSend);
+-        mButtonSendText = findViewById(R.id.buttonSendText);
+-
+-        mButtonSendImage = findViewById(R.id.buttonSendImage);
+-        mButtonImportImage = findViewById(R.id.buttonImportImage);
+-        mButtonSendOne = findViewById(R.id.SendOnePacket);
+-        mImageView = findViewById(R.id.imageView);
+-
+-        mProgressBar = findViewById(R.id.progressBar);
+-        mProgressBar.setVisibility(View.INVISIBLE);
+-
+-        mButtonImportImage.setOnClickListener(view -> {
+-            Intent mRequestFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+-            mRequestFileIntent.setType("image/jpeg");
+-            startActivityForResult(mRequestFileIntent, 0);
+-        });
+-
+-        mButtonSendText.setOnClickListener(view -> {
+-            boolean wasEnabled = false;
+-
+-            if (mButtonSendImage.isEnabled())
+-                wasEnabled = true;
+-
+-            mButtonSendText.setEnabled(false);
+-            mButtonImportImage.setEnabled(false);
+-            mButtonSendImage.setEnabled(false);
+-
+-            String message = mDataToSend.getText().toString();
+-            byte[] header = new byte[]{(byte) 0xAA, (byte) 0xAA};
+-            byte[] messageBytes;
+-            messageBytes = message.getBytes(StandardCharsets.UTF_8);
+-            byte[] finalMessage = new byte[header.length + messageBytes.length];
+-            System.arraycopy(header, 0, finalMessage, 0, header.length);
+-            System.arraycopy(messageBytes, 0, finalMessage, header.length, messageBytes.length);
+-
+-            sendMessage(finalMessage);
+-
+-            boolean finalWasEnabled = wasEnabled;
+-            runOnUiThread(() -> {
+-                if (finalWasEnabled)
+-                    mButtonSendImage.setEnabled(true);
+-                mButtonSendText.setEnabled(true);
+-                mButtonImportImage.setEnabled(true);
+-            });
+-        });
+-
+-        mButtonSendOne.setOnClickListener(view -> {
+-            if (mMessageSent == null) {
+-                byte[] header = new byte[]{(byte) 0x55, (byte) 0x55};
+-                byte[] sizeInBytes = ByteBuffer.allocate(4).putInt(mImage.length).array();
+-
+-                byte[] finalHeader = new byte[PACKET_SIZE];
+-
+-                System.arraycopy(header, 0, finalHeader, 0, header.length);
+-                System.arraycopy(sizeInBytes, 0, finalHeader, header.length, sizeInBytes.length);
+-
+-                mMessageSent = finalHeader;
+-                byte[] finalMessagePart2 = mMessageSent;
+-                runOnUiThread(() -> {
+-                    String text = "0/" + ((mImage.length / PACKET_SIZE) + 1);
+-                    mStatus.setText(text);
+-                    mPreviousCharset.setText(mNextCharset.getText());
+-                    mNextCharset.setText(bytesToHex(finalMessagePart2));
+-                    mProgressBar.setVisibility(View.VISIBLE);
+-                    mProgressBar.setMax(mImage.length / PACKET_SIZE);
+-                    mButtonSendImage.setEnabled(false);
+-                    mButtonImportImage.setEnabled(false);
+-                    mButtonSendText.setEnabled(false);
+-                });
+-                sendMessage(mMessageSent);
+-                mBLEAvailable = false;
+-            } else {
+-                mMessageSent = Arrays.copyOfRange(mImage, mI * PACKET_SIZE, ((mI + 1) * PACKET_SIZE));
+-                int finalI = mI;
+-                byte[] finalMessagePart2 = mMessageSent;
+-                runOnUiThread(() -> {
+-                    String text = finalI + 1 + "/" + ((mImage.length / PACKET_SIZE) + 1);
+-                    mPreviousCharset.setText(mNextCharset.getText());
+-                    mNextCharset.setText(bytesToHex(finalMessagePart2));
+-                    mStatus.setText(text);
+-                    mProgressBar.setProgress(mI);
+-                });
+-
+-                if (mBLEAvailable) {
+-                    sendMessage(mMessageSent);
+-                    mI++;
+-                    mBLEAvailable = false;
+-                }
+-            }
+-        });
+-
+-        mButtonSendImage.setOnClickListener(view -> {
+-            runOnUiThread(() -> {
+-                mButtonSendText.setEnabled(false);
+-                mButtonSendImage.setEnabled(false);
+-                mButtonImportImage.setEnabled(false);
+-                mButtonSendOne.setEnabled(false);
+-            });
+-
+-
+-            Thread thread = new Thread() {
+-                @Override
+-                public void run() {
+-                    byte[] header = new byte[]{(byte) 0x55, (byte) 0x55};
+-                    byte[] sizeInBytes = ByteBuffer.allocate(4).putInt(mImage.length).array();
+-                    byte[] finalHeader = new byte[PACKET_SIZE];
+-
+-                    System.arraycopy(header, 0, finalHeader, 0, header.length);
+-                    System.arraycopy(sizeInBytes, 0, finalHeader, header.length, sizeInBytes.length);
+-
+-                    mProgressBar.setMax(mImage.length / PACKET_SIZE);
+-
+-                    mMessageSent = finalHeader;
+-                    byte[] finalMessagePart = mMessageSent;
+-                    runOnUiThread(() -> {
+-                        String text = "0/" + ((mImage.length / PACKET_SIZE) + 1);
+-                        mStatus.setText(text);
+-                        mPreviousCharset.setText(mNextCharset.getText());
+-                        mNextCharset.setText(bytesToHex(finalMessagePart));
+-                        mProgressBar.setVisibility(View.VISIBLE);
+-                        mNext.setVisibility(View.VISIBLE);
+-                        mPrevious.setVisibility(View.VISIBLE);
+-                        mButtonSendImage.setEnabled(false);
+-                        mButtonImportImage.setEnabled(false);
+-                        mButtonSendOne.setEnabled(false);
+-                        mButtonSendText.setEnabled(false);
+-                    });
+-
+-                    try {
+-                        sendMessage(mMessageSent);
+-                        mBLEAvailable = false;
+-                        Thread.sleep(100);
+-                    } catch (InterruptedException e) {
+-                        e.printStackTrace();
+-                    }
+-
+-                    for (mI = 0; mI != (mImage.length / PACKET_SIZE) + 1; mI++) {
+-                        while (!mBLEAvailable) {
+-                            try {
+-                                Thread.sleep(1);
+-                            } catch (InterruptedException e) {
+-                                e.printStackTrace();
+-                            }
+-                        }
+-                        mMessageSent = Arrays.copyOfRange(mImage, mI * PACKET_SIZE, ((mI + 1) * PACKET_SIZE));
+-                        int finalI = mI;
+-                        byte[] finalMessagePart2 = mMessageSent;
+-                        mProgressBar.setProgress(mI);
+-                        runOnUiThread(() -> {
+-                            String text = finalI + 1 + "/" + ((mImage.length / PACKET_SIZE) + 1);
+-                            mPreviousCharset.setText(mNextCharset.getText());
+-                            mNextCharset.setText(bytesToHex(finalMessagePart2));
+-                            mStatus.setText(text);
+-                        });
+-
+-                        if (!sendMessage(mMessageSent))
+-                            mI--;
+-                        else
+-                            mBLEAvailable = false;
+-                    }
+-
+-                    mMessageSent = null;
+-
+-                    runOnUiThread(() -> {
+-                        mProgressBar.setVisibility(View.INVISIBLE);
+-                        mNext.setVisibility(View.INVISIBLE);
+-                        mPrevious.setVisibility(View.INVISIBLE);
+-                        mPreviousCharset.setText("");
+-                        mNextCharset.setText("");
+-                        mStatus.setText("");
+-                        mButtonSendText.setEnabled(true);
+-                        mButtonSendImage.setEnabled(true);
+-                        mButtonImportImage.setEnabled(true);
+-                        mButtonSendOne.setEnabled(true);
+-                    });
+-
+-                }
+-            };
+-
+-            thread.start();
+-        });
++        TextView deviceText = findViewById(R.id.DeviceNameConnect);
+ 
+         BluetoothDevice selectedDevice = getIntent().getParcelableExtra("Device");
+         assert selectedDevice != null;
+@@ -257,107 +42,29 @@
+ 
+         deviceText.setText(selectedDevice.getName());
+ 
++        mListView = findViewById(R.id.listView2);
++
++        mListView.setOnItemClickListener((adapterView, view, i, l) -> {
++            if (l != 0 && mListCharacteristics.get((int) l) != null) {
++                BluetoothGattCharacteristic characteristic = mListCharacteristics.get((int) l);
++                Intent intent = new Intent(ConnectActivity.this, SendActivity.class);
++                intent.putExtra("Device", selectedDevice);
++                intent.putExtra("Chara", characteristic.getUuid().toString());
++                intent.putExtra("Service", characteristic.getService().getUuid().toString());
++                startActivity(intent);
++            }
++        });
++
+         connectDevice(selectedDevice);
+-
+-        mButtonSendText.setEnabled(false);
+-        mButtonImportImage.setEnabled(false);
+-        mButtonSendImage.setEnabled(false);
+-        mButtonSendOne.setEnabled(false);
+     }
+-
+-    public byte[] getBytes(InputStream inputStream) throws IOException {
+-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+-        int bufferSize = 1024;
+-        byte[] buffer = new byte[bufferSize];
+-
+-        int len;
+-        while ((len = inputStream.read(buffer)) != -1) {
+-            byteBuffer.write(buffer, 0, len);
+-        }
+-        return byteBuffer.toByteArray();
+-    }
+-
+-    @Override
+-    public void onActivityResult(int requestCode, int resultCode,
+-                                 Intent returnIntent) {
+-        super.onActivityResult(requestCode, resultCode, returnIntent);
+-        if (resultCode == RESULT_OK) {
+-            Uri returnUri = returnIntent.getData();
+-            mImageView.setImageURI(returnUri);
+-
+-            InputStream iStream;
+-            try {
+-                assert returnUri != null;
+-                iStream = getContentResolver().openInputStream(returnUri);
+-                assert iStream != null;
+-                mImage = getBytes(iStream);
+-            } catch (IOException e) {
+-                e.printStackTrace();
+-            }
+-
+-            mButtonSendImage.setEnabled(true);
+-            mButtonSendOne.setEnabled(true);
+-        }
+-    }
+-
+-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+-
+-    public static String bytesToHex(byte[] bytes) {
+-        byte[] hexChars = new byte[bytes.length * 3];
+-        for (int j = 0; j < bytes.length; j++) {
+-            int v = bytes[j] & 0xFF;
+-            hexChars[j * 3] = (byte) HEX_ARRAY[v >>> 4];
+-            hexChars[j * 3 + 1] = (byte) HEX_ARRAY[v & 0x0F];
+-            if (j != bytes.length - 1)
+-                hexChars[j * 3 + 2] = '-';
+-        }
+-        return new String(hexChars, StandardCharsets.UTF_8);
+-    }
+-
+-    private boolean sendMessage(byte[] message) {
+-        if (!mConnected || !mInitialized) {
+-            return false;
+-        }
+-        BluetoothGattService service = mGatt.getService(SERVICE_UUID);
+-        BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_UUID);
+-        characteristic.setValue(message);
+-
+-        boolean success = mGatt.writeCharacteristic(characteristic);
+-        Log.d(TAG, "Sending message " + (success ? "success \"" : "not success \"") + bytesToHex(message) + "\"");
+-        return success;
+-    }
+-
+ 
+     private void connectDevice(BluetoothDevice device) {
+         GattClientCallback gattClientCallback = new GattClientCallback();
+         mGatt = device.connectGatt(this, false, gattClientCallback);
++        mGatt.requestMtu(20);
+     }
+ 
+     private class GattClientCallback extends BluetoothGattCallback {
+-        @Override
+-        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+-            switch (status) {
+-                case BluetoothGatt.GATT_SUCCESS: {
+-                    Log.i(TAG, "Wrote to characteristic " + characteristic.getUuid() + " | value: " + bytesToHex(characteristic.getValue()));
+-                    mBLEAvailable = true;
+-                    break;
+-                }
+-                case BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH: {
+-                    Log.e(TAG, "Write exceeded connection ATT MTU!");
+-                    break;
+-                }
+-                case BluetoothGatt.GATT_WRITE_NOT_PERMITTED: {
+-                    Log.e(TAG, "Write not permitted!");
+-                    break;
+-                }
+-                default: {
+-                    Log.e(TAG, "Characteristic write failed, error: " + status);
+-                    break;
+-                }
+-            }
+-            super.onCharacteristicWrite(gatt, characteristic, status);
+-        }
+-
+         @Override
+         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
+             Log.d(TAG, "ATT MTU changed to " + mtu + (status == BluetoothGatt.GATT_SUCCESS ? " Success" : " Failure"));
+@@ -375,11 +82,6 @@
+                 return;
+             }
+             if (newState == BluetoothProfile.STATE_CONNECTED) {
+-                mConnected = true;
+-                runOnUiThread(() -> {
+-                    mButtonSendText.setEnabled(true);
+-                    mButtonImportImage.setEnabled(true);
+-                });
+                 gatt.discoverServices();
+             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                 disconnectGattServer();
+@@ -392,25 +94,29 @@
+             if (status != BluetoothGatt.GATT_SUCCESS) {
+                 return;
+             }
+-            for(BluetoothGattService service : gatt.getServices()){
++
++            mAdapter = new ArrayAdapter<>(ConnectActivity.this,
++                    android.R.layout.simple_list_item_1,
++                    mListItems);
++            runOnUiThread(() -> mListView.setAdapter(mAdapter));
++            mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
++            for (BluetoothGattService service : gatt.getServices()) {
++                mListCharacteristics.add(null);
++                mListItems.add(service.getUuid().toString());
+                 Log.d(TAG, gatt.getDevice().getName() + ": " + service.getUuid().toString());
+-                for(BluetoothGattCharacteristic characteristic : service.getCharacteristics())
++                for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
++                    mListCharacteristics.add(characteristic);
++                    mListItems.add("    " + characteristic.getUuid().toString());
+                     Log.d(TAG, "          ->" + characteristic.getUuid().toString());
+-            }
+-            if (gatt.getDevice().getName().startsWith("Quanta")) {
+-                BluetoothGattService service = gatt.getService(SERVICE_UUID);
+-                gatt.requestMtu(PACKET_SIZE);
+-                BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_UUID);
+-                characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+-                mInitialized = gatt.setCharacteristicNotification(characteristic, true);
++                }
+             }
++            mAdapter.notifyDataSetChanged();
++            disconnectGattServer();
+         }
+ 
+     }
+-
+ 
+     private void disconnectGattServer() {
+-        mConnected = false;
+         if (mGatt != null) {
+             mGatt.disconnect();
+             mGatt.close();
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(date 1597301620729)
++++ app/src/main/AndroidManifest.xml	(date 1597301620729)
+@@ -14,6 +14,7 @@
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+         android:theme="@style/Theme.AppCompat">
++        <activity android:name=".SendActivity"></activity>
+         <activity
+             android:name=".ConnectActivity"
+             android:screenOrientation="portrait" />
+@@ -25,6 +26,7 @@
+             android:screenOrientation="portrait">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
++
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+         </activity>
