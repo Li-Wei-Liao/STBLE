@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat"
         tools:ignore="AllowBackup">
+        <activity android:name=".SendActivity" />
         <activity
             android:name=".ConnectActivity"
             android:screenOrientation="portrait" />

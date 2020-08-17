@@ -45,12 +45,10 @@ public class ScanActivity extends AppCompatActivity {
     private List<String> mListElementsArrayList;
     private ArrayAdapter<String> mAdapter;
 
-    private Handler mHandler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_client);
+        setContentView(R.layout.activity_scan);
         BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
 
@@ -106,8 +104,7 @@ public class ScanActivity extends AppCompatActivity {
         mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
         mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
         mScanning = true;
-        mHandler = new Handler();
-        mHandler.postDelayed(this::stopScan, SCAN_PERIOD);
+        new Handler().postDelayed(this::stopScan, SCAN_PERIOD);
     }
 
     private void stopScan() {
@@ -118,7 +115,6 @@ public class ScanActivity extends AppCompatActivity {
 
         mScanCallback = null;
         mScanning = false;
-        mHandler = null;
     }
 
     private void scanComplete() {
