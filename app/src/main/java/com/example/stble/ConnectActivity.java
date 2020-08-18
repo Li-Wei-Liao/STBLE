@@ -2,12 +2,16 @@ package com.example.stble;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -16,8 +20,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class ConnectActivity extends AppCompatActivity {
+public class ConnectActivity extends AppCompatActivity implements ServiceConnection {
 
     private static final String TAG = "CONNECT_ACTIVITY";
 
@@ -27,7 +32,10 @@ public class ConnectActivity extends AppCompatActivity {
     ArrayList<BluetoothGattCharacteristic> mListCharacteristics = new ArrayList<>();
     ArrayAdapter<String> mAdapter;
 
-    private BluetoothGatt mGatt;
+    private BluetoothDevice mSelectedDevice;
+
+    private BluetoothService mBluetoothService;
+    private ConnectActivity.DataUpdateReceiver dataUpdateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +44,11 @@ public class ConnectActivity extends AppCompatActivity {
 
         TextView deviceText = findViewById(R.id.DeviceNameConnect);
 
-        BluetoothDevice selectedDevice = getIntent().getParcelableExtra("Device");
-        assert selectedDevice != null;
-        Log.d(TAG, "Device " + selectedDevice.getName());
+        mSelectedDevice = getIntent().getParcelableExtra("Device");
+        assert mSelectedDevice != null;
+        Log.d(TAG, "Device " + mSelectedDevice.getName());
 
-        deviceText.setText(selectedDevice.getName());
+        deviceText.setText(mSelectedDevice.getName());
 
         mListView = findViewById(R.id.listView2);
 
@@ -48,83 +56,78 @@ public class ConnectActivity extends AppCompatActivity {
             if (l != 0 && mListCharacteristics.get((int) l) != null) {
                 BluetoothGattCharacteristic characteristic = mListCharacteristics.get((int) l);
                 Intent intent = new Intent(ConnectActivity.this, SendActivity.class);
-                intent.putExtra("Device", selectedDevice);
+                intent.putExtra("Device", mSelectedDevice);
                 intent.putExtra("Chara", characteristic.getUuid().toString());
                 intent.putExtra("Service", characteristic.getService().getUuid().toString());
                 startActivity(intent);
             }
         });
-
-        connectDevice(selectedDevice);
     }
 
-    private void connectDevice(BluetoothDevice device) {
-        GattClientCallback gattClientCallback = new GattClientCallback();
-        mGatt = device.connectGatt(this, false, gattClientCallback);
-        mGatt.requestMtu(20);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = new Intent(this, BluetoothService.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+
+        if (dataUpdateReceiver == null)
+            dataUpdateReceiver = new ConnectActivity.DataUpdateReceiver();
+
+        IntentFilter intentFilter = new IntentFilter(BluetoothService.CHARACTERISTICS_DISCOVERED);
+        registerReceiver(dataUpdateReceiver, intentFilter);
     }
 
-    private void disconnectGattServer() {
-        if (mGatt != null) {
-            mGatt.disconnect();
-            mGatt.close();
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (dataUpdateReceiver != null) unregisterReceiver(dataUpdateReceiver);
     }
 
     @Override
     protected void onDestroy() {
-        disconnectGattServer();
+        unbindService(this);
+
+        mBluetoothService.disconnectGattServer();
         super.onDestroy();
     }
 
-    private class GattClientCallback extends BluetoothGattCallback {
+    @Override
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        BluetoothService.MyBinder b = (BluetoothService.MyBinder) iBinder;
+        mBluetoothService = b.getService();
+        mBluetoothService.connectDevice(mSelectedDevice);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName componentName) {
+        mBluetoothService = null;
+    }
+
+    private class DataUpdateReceiver extends BroadcastReceiver {
         @Override
-        public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
-            Log.d(TAG, "ATT MTU changed to " + mtu + (status == BluetoothGatt.GATT_SUCCESS ? " Success" : " Failure"));
-            super.onMtuChanged(gatt, mtu, status);
-        }
+        public void onReceive(Context context, Intent intent) {
+            if (Objects.equals(intent.getAction(), BluetoothService.CHARACTERISTICS_DISCOVERED)) {
 
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            super.onConnectionStateChange(gatt, status, newState);
-            if (status == BluetoothGatt.GATT_FAILURE) {
-                disconnectGattServer();
-                return;
-            } else if (status != BluetoothGatt.GATT_SUCCESS) {
-                disconnectGattServer();
-                return;
-            }
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                gatt.discoverServices();
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                disconnectGattServer();
-            }
-        }
+                BluetoothGatt gatt = mBluetoothService.getGatt();
 
+                mAdapter = new ArrayAdapter<>(ConnectActivity.this,
+                        android.R.layout.simple_list_item_1,
+                        mListItems);
+                runOnUiThread(() -> mListView.setAdapter(mAdapter));
+                mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            super.onServicesDiscovered(gatt, status);
-            if (status != BluetoothGatt.GATT_SUCCESS) {
-                return;
-            }
-            mAdapter = new ArrayAdapter<>(ConnectActivity.this,
-                    android.R.layout.simple_list_item_1,
-                    mListItems);
-            runOnUiThread(() -> mListView.setAdapter(mAdapter));
-            mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            for (BluetoothGattService service : gatt.getServices()) {
-                Log.d(TAG, gatt.getDevice().getName() + ": " + service.getUuid().toString());
-                mListCharacteristics.add(null);
-                mListItems.add(service.getUuid().toString());
-                for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-                    mListCharacteristics.add(characteristic);
-                    mListItems.add("    " + characteristic.getUuid().toString());
-                    Log.d(TAG, "          ->" + characteristic.getUuid().toString());
+                for (BluetoothGattService service : gatt.getServices()) {
+                    Log.d(TAG, service.getUuid().toString());
+                    mListCharacteristics.add(null);
+                    mListItems.add(service.getUuid().toString());
+                    for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+                        mListCharacteristics.add(characteristic);
+                        mListItems.add("  └─> " + characteristic.getUuid().toString());
+                        Log.d(TAG, "  └─> " + characteristic.getUuid().toString());
+                    }
                 }
+                runOnUiThread(() -> mAdapter.notifyDataSetChanged());
             }
-            runOnUiThread(() -> mAdapter.notifyDataSetChanged());
-            disconnectGattServer();
         }
-
     }
 }

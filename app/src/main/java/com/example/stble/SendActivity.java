@@ -1,14 +1,15 @@
 package com.example.stble;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,17 +26,17 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
-public class SendActivity extends AppCompatActivity {
+public class SendActivity extends AppCompatActivity implements ServiceConnection {
 
 
     private static final int PACKET_SIZE = 20;
     private static final String TAG = "SEND_ACTIVITY";
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private UUID SERVICE_UUID;
     private UUID CHARACTERISTIC_UUID;
-    private BluetoothGatt mGatt;
+
     private Button mButtonSendText, mButtonSendImage, mButtonImportImage, mButtonSendOne;
     private ImageView mImageView;
     private EditText mDataToSend;
@@ -44,20 +45,11 @@ public class SendActivity extends AppCompatActivity {
     private byte[] mImage;
     private byte[] mMessageSent;
     private int mI;
-    private volatile boolean mBLEAvailable = true;
-    private boolean mInitialized;
 
-    public static String bytesToHex(byte[] bytes) {
-        byte[] hexChars = new byte[bytes.length * 3];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 3] = (byte) HEX_ARRAY[v >>> 4];
-            hexChars[j * 3 + 1] = (byte) HEX_ARRAY[v & 0x0F];
-            if (j != bytes.length - 1)
-                hexChars[j * 3 + 2] = '-';
-        }
-        return new String(hexChars, StandardCharsets.UTF_8);
-    }
+    private volatile boolean mBLEAvailable = true;
+
+    private BluetoothService mBluetoothService;
+    private SendActivity.DataUpdateReceiver dataUpdateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +108,7 @@ public class SendActivity extends AppCompatActivity {
             System.arraycopy(header, 0, finalMessage, 0, header.length);
             System.arraycopy(messageBytes, 0, finalMessage, header.length, messageBytes.length);
 
-            sendMessage(finalMessage);
+            mBluetoothService.sendMessage(finalMessage);
 
             boolean finalWasEnabled = wasEnabled;
             runOnUiThread(() -> {
@@ -143,14 +135,15 @@ public class SendActivity extends AppCompatActivity {
                     String text = "0/" + ((mImage.length / PACKET_SIZE) + 1);
                     mStatus.setText(text);
                     mPreviousCharset.setText(mNextCharset.getText());
-                    mNextCharset.setText(bytesToHex(finalMessagePart2));
+                    mNextCharset.setText(BluetoothService.bytesToHex(finalMessagePart2));
                     mProgressBar.setVisibility(View.VISIBLE);
                     mProgressBar.setMax(mImage.length / PACKET_SIZE);
                     mButtonSendImage.setEnabled(false);
                     mButtonImportImage.setEnabled(false);
                     mButtonSendText.setEnabled(false);
+                    mDataToSend.setEnabled(false);
                 });
-                sendMessage(mMessageSent);
+                mBluetoothService.sendMessage(mMessageSent);
                 mBLEAvailable = false;
             } else {
                 mMessageSent = Arrays.copyOfRange(mImage, mI * PACKET_SIZE, ((mI + 1) * PACKET_SIZE));
@@ -159,13 +152,13 @@ public class SendActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     String text = finalI + 1 + "/" + ((mImage.length / PACKET_SIZE) + 1);
                     mPreviousCharset.setText(mNextCharset.getText());
-                    mNextCharset.setText(bytesToHex(finalMessagePart2));
+                    mNextCharset.setText(BluetoothService.bytesToHex(finalMessagePart2));
                     mStatus.setText(text);
                     mProgressBar.setProgress(mI);
                 });
 
                 if (mBLEAvailable) {
-                    sendMessage(mMessageSent);
+                    mBluetoothService.sendMessage(mMessageSent);
                     mI++;
                     mBLEAvailable = false;
                 }
@@ -199,7 +192,7 @@ public class SendActivity extends AppCompatActivity {
                         String text = "0/" + ((mImage.length / PACKET_SIZE) + 1);
                         mStatus.setText(text);
                         mPreviousCharset.setText(mNextCharset.getText());
-                        mNextCharset.setText(bytesToHex(finalMessagePart));
+                        mNextCharset.setText(BluetoothService.bytesToHex(finalMessagePart));
                         mProgressBar.setVisibility(View.VISIBLE);
                         mNext.setVisibility(View.VISIBLE);
                         mPrevious.setVisibility(View.VISIBLE);
@@ -211,7 +204,7 @@ public class SendActivity extends AppCompatActivity {
                     });
 
                     try {
-                        sendMessage(mMessageSent);
+                        mBluetoothService.sendMessage(mMessageSent);
                         mBLEAvailable = false;
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
@@ -233,17 +226,18 @@ public class SendActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             String text = finalI + 1 + "/" + ((mImage.length / PACKET_SIZE) + 1);
                             mPreviousCharset.setText(mNextCharset.getText());
-                            mNextCharset.setText(bytesToHex(finalMessagePart2));
+                            mNextCharset.setText(BluetoothService.bytesToHex(finalMessagePart2));
                             mStatus.setText(text);
                         });
 
-                        if (!sendMessage(mMessageSent))
+                        if (!mBluetoothService.sendMessage(mMessageSent))
                             mI--;
                         else
                             mBLEAvailable = false;
                     }
 
                     mMessageSent = null;
+                    mI = 0;
 
                     runOnUiThread(() -> {
                         mProgressBar.setVisibility(View.INVISIBLE);
@@ -272,10 +266,31 @@ public class SendActivity extends AppCompatActivity {
         CHARACTERISTIC_UUID = java.util.UUID.fromString(getIntent().getStringExtra("Chara"));
 
         Log.d(TAG, selectedDevice.getName() + " " + SERVICE_UUID + " " + CHARACTERISTIC_UUID);
-        connectDevice(selectedDevice);
 
         mButtonSendText.setEnabled(false);
         mButtonImportImage.setEnabled(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = new Intent(this, BluetoothService.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+
+        if (dataUpdateReceiver == null)
+            dataUpdateReceiver = new SendActivity.DataUpdateReceiver();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothService.BLE_AVAILABLE);
+        intentFilter.addAction(BluetoothService.INITIALIZED);
+        registerReceiver(dataUpdateReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dataUpdateReceiver != null) unregisterReceiver(dataUpdateReceiver);
+        unbindService(this);
     }
 
     public byte[] getBytes(InputStream inputStream) throws IOException {
@@ -313,79 +328,28 @@ public class SendActivity extends AppCompatActivity {
         }
     }
 
-    private boolean sendMessage(byte[] message) {
-        if (!mInitialized) {
-            return false;
-        }
-        BluetoothGattService service = mGatt.getService(SERVICE_UUID);
-        BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_UUID);
-        characteristic.setValue(message);
-
-        boolean success = mGatt.writeCharacteristic(characteristic);
-        Log.d(TAG, "Sending message " + (success ? "success \"" : "not success \"") + bytesToHex(message) + "\"");
-        return success;
+    @Override
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        BluetoothService.MyBinder b = (BluetoothService.MyBinder) iBinder;
+        mBluetoothService = b.getService();
+        mBluetoothService.setUUIDs(SERVICE_UUID, CHARACTERISTIC_UUID);
     }
 
-    private void connectDevice(BluetoothDevice device) {
-        SendActivity.GattClientCallback gattClientCallback = new SendActivity.GattClientCallback();
-        mGatt = device.connectGatt(this, false, gattClientCallback);
+    @Override
+    public void onServiceDisconnected(ComponentName componentName) {
+        mBluetoothService = null;
     }
 
-    private void disconnectGattServer() {
-        if (mGatt != null) {
-            mGatt.disconnect();
-            mGatt.close();
-        }
-    }
-
-    private class GattClientCallback extends BluetoothGattCallback {
+    private class DataUpdateReceiver extends BroadcastReceiver {
         @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            switch (status) {
-                case BluetoothGatt.GATT_SUCCESS: {
-                    Log.i(TAG, "Wrote to characteristic " + characteristic.getUuid() + " | value: " + bytesToHex(characteristic.getValue()));
-                    mBLEAvailable = true;
-                    break;
-                }
-                case BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH: {
-                    Log.e(TAG, "Write exceeded connection ATT MTU!");
-                    break;
-                }
-                case BluetoothGatt.GATT_WRITE_NOT_PERMITTED: {
-                    Log.e(TAG, "Write not permitted!");
-                    break;
-                }
-                default: {
-                    Log.e(TAG, "Characteristic write failed, error: " + status);
-                    break;
-                }
-            }
-            super.onCharacteristicWrite(gatt, characteristic, status);
-        }
-
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            super.onConnectionStateChange(gatt, status, newState);
-            if (status == BluetoothGatt.GATT_FAILURE) {
-                disconnectGattServer();
-                return;
-            } else if (status != BluetoothGatt.GATT_SUCCESS) {
-                disconnectGattServer();
-                return;
-            }
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                BluetoothGattService service = mGatt.getService(SERVICE_UUID);
-                BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_UUID);
-                characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
-                mInitialized = mGatt.setCharacteristicNotification(characteristic, true);
-
+        public void onReceive(Context context, Intent intent) {
+            if (Objects.equals(intent.getAction(), BluetoothService.BLE_AVAILABLE)) {
+                mBLEAvailable = true;
+            } else if (Objects.equals(intent.getAction(), BluetoothService.INITIALIZED)) {
                 runOnUiThread(() -> {
                     mButtonSendText.setEnabled(true);
                     mButtonImportImage.setEnabled(true);
                 });
-
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                disconnectGattServer();
             }
         }
     }

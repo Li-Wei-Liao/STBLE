@@ -3,16 +3,16 @@ package com.example.stble;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -23,35 +23,33 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-public class ScanActivity extends AppCompatActivity {
+public class ScanActivity extends AppCompatActivity implements ServiceConnection {
 
     private static final int REQUEST_ENABLE_BT = 42;
     private static final String TAG = "SCAN_ACTIVITY";
     private static final int REQUEST_FINE_LOCATION = 12;
     private static final long SCAN_PERIOD = 10000;
 
-    private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning = false;
-    private ArrayList<BluetoothDevice> mScanResults;
-    private BtleScanCallback mScanCallback;
-    private BluetoothLeScanner mBluetoothLeScanner;
-
-    private BluetoothDevice mSelectedDevice;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String[] mListElements = new String[]{""};
-
     private List<String> mListElementsArrayList;
     private ArrayAdapter<String> mAdapter;
+
+    private ArrayList<BluetoothDevice> mScanResults;
+    private BluetoothDevice mSelectedDevice;
+
+    private BluetoothService mBluetoothService;
+
+    private DataUpdateReceiver dataUpdateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
-        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
-
         mSwipeRefreshLayout = findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             finish();
@@ -87,33 +85,34 @@ public class ScanActivity extends AppCompatActivity {
             }
         });
 
-        startScan();
+        Intent intent = new Intent(this, BluetoothService.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+        if (dataUpdateReceiver == null) dataUpdateReceiver = new DataUpdateReceiver();
+        IntentFilter intentFilter = new IntentFilter(BluetoothService.DEVICE_LIST_UPDATED);
+        registerReceiver(dataUpdateReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (dataUpdateReceiver != null) unregisterReceiver(dataUpdateReceiver);
+        unbindService(this);
     }
 
     private void startScan() {
-        if (!hasPermissions() || mScanning) {
+        if (!hasPermissions() || mScanning || mBluetoothService == null) {
             return;
         }
         runOnUiThread(() -> mSwipeRefreshLayout.setEnabled(false));
-        List<ScanFilter> filters = new ArrayList<>();
-        ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
-                .build();
-        mScanResults = new ArrayList<>();
-        mScanCallback = new BtleScanCallback();
-        mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
-        mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
+        mBluetoothService.startScan();
         mScanning = true;
         new Handler().postDelayed(this::stopScan, SCAN_PERIOD);
     }
 
     private void stopScan() {
-        if (mScanning && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
-            mBluetoothLeScanner.stopScan(mScanCallback);
-            scanComplete();
-        }
-
-        mScanCallback = null;
+        if (mScanning)
+            mBluetoothService.stopScan();
+        scanComplete();
         mScanning = false;
     }
 
@@ -125,7 +124,7 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private boolean hasPermissions() {
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+        if (mBluetoothService.getBluetoothAdapter() == null || !mBluetoothService.getBluetoothAdapter().isEnabled()) {
             requestBluetoothEnable();
             return false;
         } else if (!hasLocationPermissions()) {
@@ -149,37 +148,27 @@ public class ScanActivity extends AppCompatActivity {
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
     }
 
-    private class BtleScanCallback extends ScanCallback {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            addScanResult(result);
-        }
-
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            for (ScanResult result : results) {
-                addScanResult(result);
-            }
-        }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            Log.e(TAG, "BLE Scan Failed with code " + errorCode);
-        }
-
-        private void addScanResult(ScanResult result) {
-            BluetoothDevice device = result.getDevice();
-            if (device.getName() != null) {
-                if (!mScanResults.contains(device)) {
-                    mScanResults.add(device);
-                    mListElementsArrayList.add("Device " + device.getAddress() + " " + device.getName());
-                    Log.d(TAG, "Device " + device.getAddress() + " " + device.getName());
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-
-        }
+    @Override
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        BluetoothService.MyBinder b = (BluetoothService.MyBinder) iBinder;
+        mBluetoothService = b.getService();
+        startScan();
     }
 
+    @Override
+    public void onServiceDisconnected(ComponentName componentName) {
+        mBluetoothService = null;
+    }
 
+    private class DataUpdateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Objects.equals(intent.getAction(), BluetoothService.DEVICE_LIST_UPDATED)) {
+                mScanResults = mBluetoothService.getScanResults();
+                BluetoothDevice device = mScanResults.get(mScanResults.size() - 1);
+                mListElementsArrayList.add(device.getAddress() + " " + device.getName());
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
 }
