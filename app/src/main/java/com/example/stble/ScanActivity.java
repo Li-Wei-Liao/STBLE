@@ -14,8 +14,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -39,6 +41,8 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
     private List<String> mListElementsArrayList;
     private ArrayAdapter<String> mAdapter;
 
+    private ProgressBar mSearchWheel;
+
     private ArrayList<BluetoothDevice> mScanResults;
     private BluetoothDevice mSelectedDevice;
 
@@ -57,6 +61,8 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
             startActivity(getIntent());
             overridePendingTransition(0, 0);
         });
+
+        mSearchWheel = findViewById(R.id.progressBar);
     }
 
     @Override
@@ -103,7 +109,10 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         if (!hasPermissions() || mScanning || mBluetoothService == null) {
             return;
         }
-        runOnUiThread(() -> mSwipeRefreshLayout.setEnabled(false));
+        runOnUiThread(() -> {
+            mSwipeRefreshLayout.setEnabled(false);
+            mSearchWheel.setVisibility(View.VISIBLE);
+        });
         mBluetoothService.startScan();
         mScanning = true;
         new Handler().postDelayed(this::stopScan, SCAN_PERIOD);
@@ -113,6 +122,7 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         if (mScanning)
             mBluetoothService.stopScan();
         scanComplete();
+        runOnUiThread(() -> mSearchWheel.setVisibility(View.INVISIBLE));
         mScanning = false;
     }
 

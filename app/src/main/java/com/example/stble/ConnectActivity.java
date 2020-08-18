@@ -13,8 +13,10 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +38,8 @@ public class ConnectActivity extends AppCompatActivity implements ServiceConnect
 
     private BluetoothService mBluetoothService;
     private ConnectActivity.DataUpdateReceiver dataUpdateReceiver;
+
+    private ProgressBar mSearchWheel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,8 @@ public class ConnectActivity extends AppCompatActivity implements ServiceConnect
                 startActivity(intent);
             }
         });
+
+        mSearchWheel = findViewById(R.id.progressBar2);
     }
 
     @Override
@@ -126,7 +132,10 @@ public class ConnectActivity extends AppCompatActivity implements ServiceConnect
                         Log.d(TAG, "  └─> " + characteristic.getUuid().toString());
                     }
                 }
-                runOnUiThread(() -> mAdapter.notifyDataSetChanged());
+                runOnUiThread(() -> {
+                    mAdapter.notifyDataSetChanged();
+                    mSearchWheel.setVisibility(View.INVISIBLE);
+                });
             }
         }
     }
