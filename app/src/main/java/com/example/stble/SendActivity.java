@@ -29,6 +29,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Class to send data to the device
+ */
 public class SendActivity extends AppCompatActivity implements ServiceConnection {
 
 
@@ -51,6 +54,11 @@ public class SendActivity extends AppCompatActivity implements ServiceConnection
     private BluetoothService mBluetoothService;
     private SendActivity.DataUpdateReceiver dataUpdateReceiver;
 
+    /**
+     * Send Activity onCreate
+     *
+     * @param savedInstanceState instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -271,6 +279,9 @@ public class SendActivity extends AppCompatActivity implements ServiceConnection
         mButtonImportImage.setEnabled(false);
     }
 
+    /**
+     * Send Activity onResume
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -286,6 +297,9 @@ public class SendActivity extends AppCompatActivity implements ServiceConnection
         registerReceiver(dataUpdateReceiver, intentFilter);
     }
 
+    /**
+     * Send Activity onDestroy
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -293,6 +307,13 @@ public class SendActivity extends AppCompatActivity implements ServiceConnection
         unbindService(this);
     }
 
+    /**
+     * Get bytes from input file
+     *
+     * @param inputStream input file
+     * @return byte array
+     * @throws IOException no file available
+     */
     public byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
         int bufferSize = 1024;
@@ -305,6 +326,13 @@ public class SendActivity extends AppCompatActivity implements ServiceConnection
         return byteBuffer.toByteArray();
     }
 
+    /**
+     * returning result from get file
+     *
+     * @param requestCode  request code
+     * @param resultCode   result code
+     * @param returnIntent intent
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent returnIntent) {
@@ -328,6 +356,12 @@ public class SendActivity extends AppCompatActivity implements ServiceConnection
         }
     }
 
+    /**
+     * on bluetooth service connected
+     *
+     * @param componentName component name
+     * @param iBinder       binder
+     */
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         BluetoothService.MyBinder b = (BluetoothService.MyBinder) iBinder;
@@ -335,12 +369,26 @@ public class SendActivity extends AppCompatActivity implements ServiceConnection
         mBluetoothService.setUUIDs(SERVICE_UUID, CHARACTERISTIC_UUID);
     }
 
+    /**
+     * on bluetooth service disconnected
+     *
+     * @param componentName component name
+     */
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         mBluetoothService = null;
     }
 
+    /**
+     * Class allowing data transmit between the services and the activity
+     */
     private class DataUpdateReceiver extends BroadcastReceiver {
+        /**
+         * On data receive from bluetooth service
+         *
+         * @param context context
+         * @param intent  intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             if (Objects.equals(intent.getAction(), BluetoothService.BLE_AVAILABLE)) {

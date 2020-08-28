@@ -6,10 +6,17 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Main activity class, starting point of the program
+ */
 public class MainActivity extends AppCompatActivity {
-
     Button mClientButton;
 
+    /**
+     * Main Activity OnCreate function
+     *
+     * @param savedInstanceState instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

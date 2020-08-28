@@ -27,6 +27,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Class handling the scan of the devices
+ */
 public class ScanActivity extends AppCompatActivity implements ServiceConnection {
 
     private static final int REQUEST_ENABLE_BT = 42;
@@ -50,6 +53,11 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
 
     private DataUpdateReceiver dataUpdateReceiver;
 
+    /**
+     * Scan Activity OnCreate function
+     *
+     * @param savedInstanceState instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +73,9 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         mSearchWheel = findViewById(R.id.progressBar);
     }
 
+    /**
+     * Scan Activity OnResume function
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -98,6 +109,9 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         registerReceiver(dataUpdateReceiver, intentFilter);
     }
 
+    /**
+     * Scan Activity onPause function
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -105,6 +119,9 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         unbindService(this);
     }
 
+    /**
+     * Start the scan of devices
+     */
     private void startScan() {
         if (!hasPermissions() || mScanning || mBluetoothService == null) {
             return;
@@ -118,6 +135,9 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         new Handler().postDelayed(this::stopScan, SCAN_PERIOD);
     }
 
+    /**
+     * Stop the scan of devices
+     */
     private void stopScan() {
         if (mScanning)
             mBluetoothService.stopScan();
@@ -126,6 +146,9 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         mScanning = false;
     }
 
+    /**
+     * Called when the scan is completed
+     */
     private void scanComplete() {
         runOnUiThread(() -> mSwipeRefreshLayout.setEnabled(true));
         mListElementsArrayList.set(0, "Scan finished, found " + (mListElementsArrayList.size() - 1) + " element(s)" + ".");
@@ -133,6 +156,11 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         Log.d(TAG, "Scan complete");
     }
 
+    /**
+     * Verify if the Android device has permission to use bluetooth services
+     *
+     * @return permission status
+     */
     private boolean hasPermissions() {
         if (mBluetoothService.getBluetoothAdapter() == null || !mBluetoothService.getBluetoothAdapter().isEnabled()) {
             requestBluetoothEnable();
@@ -144,20 +172,37 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         return true;
     }
 
+    /**
+     * Request to enable the bluetooth
+     */
     private void requestBluetoothEnable() {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         Log.d(TAG, "Requested user enables Bluetooth. Try starting the scan again.");
     }
 
+    /**
+     * Verify if the Android device allow to use the location service
+     *
+     * @return true if the Android device allows to use the location service
+     */
     private boolean hasLocationPermissions() {
         return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /**
+     * Request to use the location service
+     */
     private void requestLocationPermission() {
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
     }
 
+    /**
+     * Is called when the bluetooth service is connected
+     *
+     * @param componentName name of the component
+     * @param iBinder       binder to this component
+     */
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         BluetoothService.MyBinder b = (BluetoothService.MyBinder) iBinder;
@@ -165,12 +210,26 @@ public class ScanActivity extends AppCompatActivity implements ServiceConnection
         startScan();
     }
 
+    /**
+     * Is called when the bluetooth service is disconnected
+     *
+     * @param componentName name of the component
+     */
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         mBluetoothService = null;
     }
 
+    /**
+     * Class allowing data transmit between the services and the activity
+     */
     private class DataUpdateReceiver extends BroadcastReceiver {
+        /**
+         * Function called when data is received from the service
+         *
+         * @param context context
+         * @param intent  intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             if (Objects.equals(intent.getAction(), BluetoothService.DEVICE_LIST_UPDATED)) {

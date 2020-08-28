@@ -24,6 +24,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Class to handel connection to a device
+ */
 public class ConnectActivity extends AppCompatActivity implements ServiceConnection {
 
     private static final String TAG = "CONNECT_ACTIVITY";
@@ -41,6 +44,11 @@ public class ConnectActivity extends AppCompatActivity implements ServiceConnect
 
     private ProgressBar mSearchWheel;
 
+    /**
+     * Connect Activity onCreate
+     *
+     * @param savedInstanceState instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +78,9 @@ public class ConnectActivity extends AppCompatActivity implements ServiceConnect
         mSearchWheel = findViewById(R.id.progressBar2);
     }
 
+    /**
+     * Connect Activity onResume
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -83,12 +94,18 @@ public class ConnectActivity extends AppCompatActivity implements ServiceConnect
         registerReceiver(dataUpdateReceiver, intentFilter);
     }
 
+    /**
+     * Send Activity onPause
+     */
     @Override
     protected void onPause() {
         super.onPause();
         if (dataUpdateReceiver != null) unregisterReceiver(dataUpdateReceiver);
     }
 
+    /**
+     * Send Activity onDestroy
+     */
     @Override
     protected void onDestroy() {
         unbindService(this);
@@ -97,6 +114,12 @@ public class ConnectActivity extends AppCompatActivity implements ServiceConnect
         super.onDestroy();
     }
 
+    /**
+     * When bluetooth service is connected
+     *
+     * @param componentName component name
+     * @param iBinder       binder
+     */
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         BluetoothService.MyBinder b = (BluetoothService.MyBinder) iBinder;
@@ -104,12 +127,26 @@ public class ConnectActivity extends AppCompatActivity implements ServiceConnect
         mBluetoothService.connectDevice(mSelectedDevice);
     }
 
+    /**
+     * when bluetooth service is disconnected
+     *
+     * @param componentName component name
+     */
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         mBluetoothService = null;
     }
 
+    /**
+     * Class allowing data transmit between the services and the activity
+     */
     private class DataUpdateReceiver extends BroadcastReceiver {
+        /**
+         * On data receive from bluetooth service
+         *
+         * @param context context
+         * @param intent  intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             if (Objects.equals(intent.getAction(), BluetoothService.CHARACTERISTICS_DISCOVERED)) {

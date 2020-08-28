@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Class sto handel the connection with the bluetooth driver
+ */
 public class BluetoothService extends Service {
     public static final String DEVICE_LIST_UPDATED = "DEVICE_LIST_UPDATED";
     public static final String CHARACTERISTICS_DISCOVERED = "CHARACTERISTICS_DISCOVERED";
@@ -40,6 +43,12 @@ public class BluetoothService extends Service {
     private BluetoothService.BtleScanCallback mScanCallback;
     private BluetoothLeScanner mBluetoothLeScanner;
 
+    /**
+     * Convert a byte array to hexadecimal string
+     *
+     * @param bytes input array
+     * @return output string
+     */
     public static String bytesToHex(byte[] bytes) {
         byte[] hexChars = new byte[bytes.length * 3];
         for (int j = 0; j < bytes.length; j++) {
@@ -52,23 +61,52 @@ public class BluetoothService extends Service {
         return new String(hexChars, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Get gatt method
+     *
+     * @return gatt
+     */
     public BluetoothGatt getGatt() {
         return mGatt;
     }
 
+    /**
+     * Get bluetooth adapter method
+     *
+     * @return bluetooth adapter
+     */
     public BluetoothAdapter getBluetoothAdapter() {
         return mBluetoothAdapter;
     }
 
+    /**
+     * Get scan result array method
+     *
+     * @return scan result array
+     */
     public ArrayList<BluetoothDevice> getScanResults() {
         return mScanResults;
     }
 
+    /**
+     * Bluetooth Service onStartCommand
+     *
+     * @param intent  intent
+     * @param flags   flag
+     * @param startId id
+     * @return service started
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_NOT_STICKY;
     }
 
+    /**
+     * Bluetooth Service onBind
+     *
+     * @param intent intent
+     * @return binder
+     */
     @Override
     public IBinder onBind(Intent intent) {
         if (mBluetoothAdapter == null) {
@@ -78,11 +116,20 @@ public class BluetoothService extends Service {
         return mBinder;
     }
 
+    /**
+     * Bluetooth Service onUnBind
+     *
+     * @param intent intent
+     * @return unbind status
+     */
     @Override
     public boolean onUnbind(Intent intent) {
         return super.onUnbind(intent);
     }
 
+    /**
+     * Start the bluetooth device scanning
+     */
     public void startScan() {
         List<ScanFilter> filters = new ArrayList<>();
         ScanSettings settings = new ScanSettings.Builder()
@@ -94,6 +141,9 @@ public class BluetoothService extends Service {
         mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
     }
 
+    /**
+     * Stop the bluetooth device scanning
+     */
     public void stopScan() {
         if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
             mBluetoothLeScanner.stopScan(mScanCallback);
@@ -101,12 +151,20 @@ public class BluetoothService extends Service {
         }
     }
 
+    /**
+     * Connect to a device
+     *
+     * @param device device to be connected to
+     */
     public void connectDevice(BluetoothDevice device) {
         BluetoothService.GattClientCallback gattClientCallback = new BluetoothService.GattClientCallback();
         mGatt = device.connectGatt(this, false, gattClientCallback);
         mGatt.requestMtu(20);
     }
 
+    /**
+     * Disconnect from all devices
+     */
     public void disconnectGattServer() {
         if (mGatt != null) {
             mGatt.disconnect();
@@ -114,6 +172,12 @@ public class BluetoothService extends Service {
         }
     }
 
+    /**
+     * Set the uuids to be used
+     *
+     * @param SERVICE_UUID        service uuid
+     * @param CHARACTERISTIC_UUID characteristics uuid
+     */
     public void setUUIDs(UUID SERVICE_UUID, UUID CHARACTERISTIC_UUID) {
         this.SERVICE_UUID = SERVICE_UUID;
         this.CHARACTERISTIC_UUID = CHARACTERISTIC_UUID;
@@ -127,6 +191,12 @@ public class BluetoothService extends Service {
             sendBroadcast(new Intent(BluetoothService.INITIALIZED));
     }
 
+    /**
+     * Send a message to the device
+     *
+     * @param message message to be sent
+     * @return message sent status
+     */
     public boolean sendMessage(byte[] message) {
         if (!mInitialized) {
             return false;
@@ -140,18 +210,40 @@ public class BluetoothService extends Service {
         return success;
     }
 
+    /**
+     * Class containing the binder transferring data to activities
+     */
     public class MyBinder extends Binder {
+        /**
+         * Get the class
+         *
+         * @return this class
+         */
         BluetoothService getService() {
             return BluetoothService.this;
         }
     }
 
+    /**
+     * Class for scan callback for the bluetooth driver
+     */
     private class BtleScanCallback extends ScanCallback {
+        /**
+         * Callback on scan result
+         *
+         * @param callbackType callback type
+         * @param result       result
+         */
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             addScanResult(result);
         }
 
+        /**
+         * Callback Scan multiple results
+         *
+         * @param results results
+         */
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             for (ScanResult result : results) {
@@ -159,11 +251,21 @@ public class BluetoothService extends Service {
             }
         }
 
+        /**
+         * Callback on scan fail
+         *
+         * @param errorCode error code
+         */
         @Override
         public void onScanFailed(int errorCode) {
             Log.e(TAG, "BLE Scan Failed with code " + errorCode);
         }
 
+        /**
+         * Add device to result list
+         *
+         * @param result device to be added
+         */
         private void addScanResult(ScanResult result) {
             BluetoothDevice device = result.getDevice();
             if (device.getName() != null) {
@@ -177,13 +279,30 @@ public class BluetoothService extends Service {
         }
     }
 
+    /**
+     * Class for gatt driver callback
+     */
     private class GattClientCallback extends BluetoothGattCallback {
+        /**
+         * On mtu value changed
+         *
+         * @param gatt   gatt server
+         * @param mtu    new mtu value
+         * @param status status
+         */
         @Override
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
             Log.d(TAG, "ATT MTU changed to " + mtu + (status == BluetoothGatt.GATT_SUCCESS ? " Success" : " Failure"));
             super.onMtuChanged(gatt, mtu, status);
         }
 
+        /**
+         * On connexion status changed
+         *
+         * @param gatt     gatt server
+         * @param status   status
+         * @param newState new status
+         */
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
@@ -201,7 +320,12 @@ public class BluetoothService extends Service {
             }
         }
 
-
+        /**
+         * On service discovered
+         *
+         * @param gatt   gatt server
+         * @param status status
+         */
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
             if (status != BluetoothGatt.GATT_SUCCESS) {
@@ -210,6 +334,13 @@ public class BluetoothService extends Service {
             sendBroadcast(new Intent(BluetoothService.CHARACTERISTICS_DISCOVERED));
         }
 
+        /**
+         * On characteristics written
+         *
+         * @param gatt           gatt server
+         * @param characteristic characteristic written
+         * @param status         status
+         */
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             switch (status) {
